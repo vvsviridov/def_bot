@@ -131,7 +131,7 @@ function jsonToMessage(data) {
   return `❓*${query}*❓
   ${ quota > 95 ? quota : ''  }
   
-  ${numbersMessage(numbers)}
+  ${numbersMessage(numbers).join('\n')}
   `
 }
 
@@ -162,8 +162,7 @@ bot.onText(/^\+*(\d+)$/, async (msg, match) => {
   try {
     const phoneNumber = match[1]
     if (!phoneNumber) {
-      await bot.sendMessage(msg.chat.id, 'Номер не указан ' + phoneNumber + '!')
-      return
+      throw new Error('Номер не указан ' + phoneNumber + '!')
     }
     
     const message = await numberRequest(phoneNumber)
