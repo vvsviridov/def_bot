@@ -31,11 +31,10 @@ function ruMobile(item) {
   } = item
 
   return `📱 ${number_current} 🇷🇺
-  🧮 ${def} : ${code_start} ➡ ${code_end}
+  🗂 ${def} : ${code_start} ➡ ${code_end}
   📶 ${operator} ${operator_full}
-  🗺 ${region}
-  ${ bdpn ? '⚠ ' + bdpn_operator : ''}
-  ⏲ ${time}
+  🗺 ${region}${bdpn ? '\n🔀 ' + bdpn_operator : ''}
+  🕓 ${time}
   `
 }
 
@@ -48,10 +47,10 @@ function uaMobile(item) {
     time,
   } = item
 
-  return `📱 ${number} 🇺🇳
-  🧮 ${def}
+  return `📱 ${number} 🇺🇦
+  🗂 ${def}
   📶 ${operator}
-  ⏲ ${time}
+  🕓 ${time}
   `
 }
 
@@ -68,11 +67,11 @@ function ruFixed(item) {
   } = item
 
   return `☎ ${number} 🇷🇺
-  🧮 ${code}
+  🗂 ${code}
   ☎ ${operator} ${operator_full}
   🗺 ${region}
   🏙 ${city}
-  ⏲ ${time}
+  🕓 ${time}
   `
 }
 
@@ -88,17 +87,17 @@ function otherMobile(item) {
     time,
   } = item
 
-  return `☎ ${number} 🇺🇳
-  ☎ ${country_code} ➡ ${city_code}
+  return `📱 ${number} 🏴‍☠️
+  🗂 ${country_code} ➡ ${city_code}
   🗺 ${country} ${region}
   🏙 ${city}
-  ⏲ ${time}
+  🕓 ${time}
   `
 }
 
 
 function numbersMessage(numbers) {
-  return numbers.map( item => {
+  return numbers.map(item => {
 
     if (item.success) {
       switch (item.number_type_str) {
@@ -108,13 +107,13 @@ function numbersMessage(numbers) {
           return ruFixed(item)
         case 'ua_mobile':
           return uaMobile(item)
-      
+
         default:
           return otherMobile(item)
       }
     } else {
       const { error_code, error_message } = item
-      throw new Error(`${error_code} ${error_message}`)
+      throw new Error(`${error_code} ${error_message}❗`)
     }
   })
 }
@@ -123,14 +122,13 @@ function numbersMessage(numbers) {
 function jsonToMessage(data) {
   if (!data.success) {
     const { error_code, error_message } = data
-    throw new Error(`Запрос неуспешный❗ ${error_code} ${error_message}`)
+    throw new Error(`${error_code} ${error_message}❗`)
   }
 
-  const { query, quota, numbers } = data
+  const { query, numbers } = data
 
   return `❓*${query}*❓
-  ${ quota > 95 ? quota : ''  }
-  
+
   ${numbersMessage(numbers).join('\n')}
   `
 }
@@ -151,27 +149,27 @@ async function numberRequest(phoneNumber) {
 bot.onText(/^\/start$/, async (msg) => {
   await bot.sendMessage(msg.chat.id, `Здравствуйте!
 Это бот для проверки телефонных кодов ☎📱.
-Для получения информации пришлите мне номер в международном формате, с "+" или без.
+Для получения информации пришлите мне номер в международном формате, с "➕" или без.
 пример:
 *+79040000000*`.replace(/([\(\)\!\+.-])/g, '\\$1'), {
     parse_mode: 'MarkdownV2',
   })
 })
 
-bot.onText(/^\+*(\d+)$/, async (msg, match) => {
+bot.onText(/^\+*[0-9\(\)-\.\s]+$/, async (msg, match) => {
   try {
-    const phoneNumber = match[1]
+    const phoneNumber = match[0].replace(/\D/g, '')
     if (!phoneNumber) {
       throw new Error('Номер не указан ' + phoneNumber + '!')
     }
-    
+
     const message = await numberRequest(phoneNumber)
 
     await bot.sendMessage(msg.chat.id, message, {
       parse_mode: 'MarkdownV2',
     })
   } catch (error) {
-    await bot.sendMessage(msg.chat.id, `Ошибка при обработке запроса! ${error.message || ''}`)
+    await bot.sendMessage(msg.chat.id, `Ошибка при обработке запроса❗\n${error.message || ''}`)
     console.error(error)
   }
 })
