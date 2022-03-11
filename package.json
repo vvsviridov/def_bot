@@ -1,0 +1,27 @@
+{
+  "name": "def_bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for kody.su API (Phone Numbers Info)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "serve": "nodemon index.js"
+  },
+  "keywords": [
+    "Phone",
+    "Numbers",
+    "Numbering",
+    "Plans"
+  ],
+  "author": "vvsviridov",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "node-telegram-bot-api": "^0.56.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
