@@ -9,8 +9,8 @@ const app = express()
 const port = process.env.PORT || 5000
 const { TOKEN } = process.env
 
-app.use(express.json())
-express.static.mime.define({ 'text/html': ['html'] });
+// app.use(express.json())
+// express.static.mime.define({ 'text/html': ['html'] });
 app.use('/', express.static('public'))
 
 // app.get('/', (req, res) => {
