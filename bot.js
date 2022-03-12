@@ -143,31 +143,31 @@ function jsonToMessage(data) {
 async function numberRequest(phoneNumber) {
   let data
   try {
-    // const res = await axios(`https://www.kody.su/api/v2.1/search.json?q=+${phoneNumber}&key=${API_KEY}`)
-    // data = res.data
-    data = {
-      "success": true,
-      "query": "79040000000",
-      "quota": 11,
-      "numbers": [
-        {
-          "number_current": "79040000000",
-          "number_success": true,
-          "number_type_str": "ru_mobile",
-          "number_type": 1,
-          "def": "904",
-          "number": "0000000",
-          "code_start": "0000000",
-          "code_end": "0299999",
-          "operator": "Tele2",
-          "operator_full": "ЗАО \"Смоленская Сотовая Связь\" Тверь",
-          "region": "Тверская область",
-          "time": "3.0",
-          "bdpn": false,
-          "bdpn_operator": ""
-        }
-      ]
-    }
+    const res = await axios(`https://www.kody.su/api/v2.1/search.json?q=+${phoneNumber}&key=${API_KEY}`)
+    data = res.data
+    // data = {
+    //   "success": true,
+    //   "query": "79040000000",
+    //   "quota": 11,
+    //   "numbers": [
+    //     {
+    //       "number_current": "79040000000",
+    //       "number_success": true,
+    //       "number_type_str": "ru_mobile",
+    //       "number_type": 1,
+    //       "def": "904",
+    //       "number": "0000000",
+    //       "code_start": "0000000",
+    //       "code_end": "0299999",
+    //       "operator": "Tele2",
+    //       "operator_full": "ЗАО \"Смоленская Сотовая Связь\" Тверь",
+    //       "region": "Тверская область",
+    //       "time": "3.0",
+    //       "bdpn": false,
+    //       "bdpn_operator": ""
+    //     }
+    //   ]
+    // }
   } catch (error) {
     data = error.response.data
   }
