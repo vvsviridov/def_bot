@@ -176,11 +176,13 @@ async function numberRequest(phoneNumber) {
 
 
 bot.onText(/^\/start$/, async (msg) => {
+  // await bot.sendPhoto(msg.chat.id, `https://defcodesbot.herokuapp.com/defcodesbot.jpg`)
+  await bot.sendPhoto(msg.chat.id, `${HOST}/defcodesbot.jpg`)
   await bot.sendMessage(msg.chat.id, `Здравствуйте❗
-Это бот для проверки телефонных кодов ☎📱.
+Это [бот](https://defcodesbot.herokuapp.com/) для проверки телефонных кодов ☎📱.
 Для получения информации пришлите мне номер в международном формате, с "➕" или без.
 пример:
-*+79040000000*`.replace(/([\(\)\!\+.-])/g, '\\$1'), {
+*+79040000000*`.replace(/([\!\+.-])/g, '\\$1'), {
     parse_mode: 'MarkdownV2',
   })
 })
