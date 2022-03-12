@@ -9,9 +9,8 @@ const app = express()
 const port = process.env.PORT || 5000
 const { TOKEN } = process.env
 
-// app.use(express.json())
-// express.static.mime.define({ 'text/html': ['html'] });
-app.use('/', express.static('public'))
+app.use(express.json())
+app.use('/', express.static(__dirname + '/public'))
 
 // app.get('/', (req, res) => {
 //   res.status(200).json({ message: 'Hello from the Bot API.' })
