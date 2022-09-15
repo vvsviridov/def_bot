@@ -2,6 +2,8 @@ require('dotenv').config()
 
 const TelegramBot = require('node-telegram-bot-api')
 const axios = require('axios')
+const { JSDOM } = require('jsdom')
+const FormData = require('form-data')
 
 const { TOKEN, HOST, NODE_ENV, API_KEY } = process.env
 let bot
@@ -139,13 +141,37 @@ function jsonToMessage(data) {
 }
 
 
+async function tryHtml(query) {
+  const formData = new FormData()
+  formData.append('number', query)
+  const axiosConfig = {
+    method: 'post',
+    url: 'https://www.kody.su/check-tel',
+    headers: formData.getHeaders(),
+    data: formData
+  }
+  const { data } = await axios.request(axiosConfig)
+
+  const dom = new JSDOM(data)
+  const p = dom.window.document.querySelectorAll('p')
+  const tr = dom.window.document.querySelectorAll('td')
+
+  return `✅*${query}*❓
+  ${Array.from(p).slice(2, -1).map(item => item.textContent).join('\n')}
+  ${Array.from(tr).slice(3, 5).map(item => item.textContent).join('\n')}
+  `.replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"')
+}
+
+
 async function numberRequest(phoneNumber) {
   let data
   try {
     const res = await axios(`https://www.kody.su/api/v2.1/search.json?q=+${phoneNumber}&key=${API_KEY}`)
     data = res.data
   } catch (error) {
+    if (error.response.data.error_code === 'LIMIT_EXCEEDED') return tryHtml(error.response.data.query)
     data = error.response.data
+
   }
   return jsonToMessage(data).replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"')
 }
@@ -154,7 +180,7 @@ async function numberRequest(phoneNumber) {
 bot.onText(/^\/start$/, async (msg) => {
   await bot.sendPhoto(msg.chat.id, `${HOST}/defcodesbot.jpg`)
   await bot.sendMessage(msg.chat.id, `Здравствуйте❗
-Это [бот](https://defcodesbot.herokuapp.com/) для проверки телефонных кодов ☎📱.
+Это [бот](https://defbot-production.up.railway.app/) для проверки телефонных кодов ☎📱.
 Для получения информации пришлите мне номер в международном формате, с "➕" или без.
 пример:
 *+79040000000*`.replace(/([\!\+.-])/g, '\\$1'), {
