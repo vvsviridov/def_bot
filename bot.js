@@ -141,6 +141,11 @@ function jsonToMessage(data) {
 }
 
 
+function formatHtmlToMessage(message1, message2) {
+  return `${message1}\n${message2}`.replace(/, \//g, '\n').replace(/\//g, '').replace(/:\n/g, ': ')
+}
+
+
 async function tryHtml(query) {
   const formData = new FormData()
   formData.append('number', query)
@@ -155,11 +160,11 @@ async function tryHtml(query) {
   const dom = new JSDOM(data)
   const p = dom.window.document.querySelectorAll('p')
   const tr = dom.window.document.querySelectorAll('td')
+  const message1 = Array.from(p).slice(2, -1).map(item => item.textContent).join('\n')
+  const message2 = Array.from(tr).slice(3, 5).map(item => item.textContent).join('\n')
 
-  return `✅*${query}*❓
-  ${Array.from(p).slice(2, -1).map(item => item.textContent).join('\n')}
-  ${Array.from(tr).slice(3, 5).map(item => item.textContent).join('\n')}
-  `.replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"')
+  return `✅*${query}*❓\n${formatHtmlToMessage(message1, message2)}
+  `
 }
 
 
@@ -171,9 +176,8 @@ async function numberRequest(phoneNumber) {
   } catch (error) {
     if (error.response.data.error_code === 'LIMIT_EXCEEDED') return tryHtml(error.response.data.query)
     data = error.response.data
-
   }
-  return jsonToMessage(data).replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"')
+  return jsonToMessage(data)
 }
 
 
@@ -197,7 +201,7 @@ bot.onText(/^\+*[0-9\(\)-\.\s]+$/, async (msg, match) => {
 
     const message = await numberRequest(phoneNumber)
 
-    await bot.sendMessage(msg.chat.id, message, {
+    await bot.sendMessage(msg.chat.id, message.replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"'), {
       parse_mode: 'MarkdownV2',
     })
   } catch (error) {
