@@ -6,7 +6,7 @@ const bot = require('./bot')
 
 const app = express()
 
-const port = process.env.PORT || 5000
+// const port = process.env.PORT || 5000
 const { TOKEN } = process.env
 
 app.use(express.json())
@@ -21,6 +21,7 @@ app.post(`/${TOKEN}`, (req, res) => {
   res.status(200).json({ message: 'ok' })
 })
 
-app.listen(port, () => {
-  console.log(`\n\nServer running on port ${port}.\n\n`)
-})
+console.log(`\n\nServer running.\n\n`)
+// app.listen(port, () => {
+//   console.log(`\n\nServer running on port ${port}.\n\n`)
+// })

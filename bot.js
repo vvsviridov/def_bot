@@ -10,7 +10,7 @@ let bot
 
 if (NODE_ENV === 'production') {
   bot = new TelegramBot(TOKEN)
-  bot.setWebHook(HOST + TOKEN)
+  bot.setWebHook(new URL(TOKEN, HOST).href)
 } else {
   bot = new TelegramBot(TOKEN, { polling: true })
 }
@@ -182,9 +182,11 @@ async function numberRequest(phoneNumber) {
 
 
 bot.onText(/^\/start$/, async (msg) => {
-  await bot.sendPhoto(msg.chat.id, `${HOST}/defcodesbot.jpg`)
+  NODE_ENV === 'production'
+    ? await bot.sendPhoto(msg.chat.id, `${new URL('/defcodesbot.jpg', HOST).href}`)
+    : await bot.sendMessage(msg.chat.id, '🚀')
   await bot.sendMessage(msg.chat.id, `Здравствуйте❗
-Это [бот](https://defbot-production.up.railway.app/) для проверки телефонных кодов ☎📱.
+Это [бот](${HOST}) для проверки телефонных кодов ☎📱.
 Для получения информации пришлите мне номер в международном формате, с "➕" или без.
 пример:
 *+79040000000*`.replace(/([\!\+.-])/g, '\\$1'), {
