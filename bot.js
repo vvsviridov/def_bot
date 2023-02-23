@@ -203,7 +203,7 @@ bot.onText(/^\+*[0-9\(\)-\.\s]+$/, async (msg, match) => {
 
     const message = await numberRequest(phoneNumber)
 
-    await bot.sendMessage(msg.chat.id, message.replace(/([\(\)\!\+.-])/g, '\\$1').replace(/&quot;/g, '"'), {
+    await bot.sendMessage(msg.chat.id, message.replace(/([\(\)\!\+.-\{\}])/g, '\\$1').replace(/&quot;/g, '"'), {
       parse_mode: 'MarkdownV2',
     })
   } catch (error) {
